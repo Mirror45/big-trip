@@ -4,6 +4,8 @@ export default class Points extends Observer {
   constructor() {
     super();
     this._points = [];
+    this._offers = [];
+    this._destinations = [];
   }
 
   setPoints(updateType, points) {
@@ -12,15 +14,23 @@ export default class Points extends Observer {
     this._notify(updateType);
   }
 
+  setOffers(offers) {
+    this._offers = offers.slice();
+  }
+
+  setDestinations(destinations) {
+    this._destinations = destinations.slice();
+  }
+
   getPoints() {
-    return this._tasks;
+    return this._points;
   }
 
   updatePoint(updateType, update) {
     const index = this._points.findIndex((point) => point.id === point.id);
 
     if (index === -1) {
-      throw new Error("Can't update unexisting task");
+      throw new Error("Can't update unexisting point");
     }
 
     this._points = [
@@ -42,7 +52,7 @@ export default class Points extends Observer {
     const index = this._points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
-      throw new Error("Can't delete unexisting task");
+      throw new Error("Can't delete unexisting point");
     }
 
     this._ponts = [
@@ -73,10 +83,12 @@ export default class Points extends Observer {
 
   static adaptToServer(point) {
     const adaptedPoint = Object.assign({}, point, {
-      date_from: point instanceof Date ? point.startTime.toISOString() : null, // На сервере дата хранится в ISO формате
-      date_to: point instanceof Date ? point.endTime.toISOString() : null,
+      date_from:
+        point.startTime instanceof Date ? point.startTime.toISOString() : null, // На сервере дата хранится в ISO формате
+      date_to:
+        point.endTime instanceof Date ? point.endTime.toISOString() : null,
       is_favorite: point.isFavorite,
-      base_price: price,
+      base_price: point.price,
     });
 
     // Ненужные ключи мы удаляем

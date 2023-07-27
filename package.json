@@ -16,7 +16,7 @@
     "webpack-dev-server": "3.11.0"
   },
   "engines": {
-    "node": "12"
+    "node": "16.17.0"
   },
   "dependencies": {
     "chart.js": "2.9.4",

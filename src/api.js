@@ -1,67 +1,4 @@
 import PointsModel from "./model/points.js";
-/*Пункты назначения /destinations
-Общий список дополнительных предложений /offers
-
-{
-  Destination: {
-    description:
-      "Chamonix, is a beautiful city, a true asian pearl, with crowded streets.",
-    name: "Chamonix",
-    pictures: [
-      {
-        src: "http://picsum.photos/300/200?r=0.0762563005163317",
-        description: "Chamonix parliament building",
-      },
-    ],
-  },
-
-  Offer: {
-    type: "taxi",
-    offers: [
-      {
-        title: "Upgrade to a business class",
-        price: 120,
-      },
-      {
-        title: "Choose the radio station",
-        price: 60,
-      },
-    ],
-  },
-
-  Point: {
-    base_price: 1100,
-    date_from: "2019-07-10T22:55:56.845Z",
-    date_to: "2019-07-11T11:22:13.375Z",
-    destination: $Destination$,
-    id: "0",
-    is_favorite: false,
-    offers: [
-      {
-        title: "Choose meal",
-        price: 180,
-      },
-      {
-        title: "Upgrade to comfort class",
-        price: 50,
-      },
-    ],
-    type: "bus",
-  },
-
-  type: [
-    "taxi",
-    "bus",
-    "train",
-    "ship",
-    "transport",
-    "drive",
-    "flight",
-    "check-in",
-    "sightseeing",
-    "restaurant",
-  ],
-}*/
 
 const Method = {
   GET: "GET",
@@ -85,6 +22,14 @@ export default class Api {
     return this._load({ url: "points" })
       .then(Api.toJSON)
       .then((points) => points.map(PointsModel.adaptToClient));
+  }
+
+  getOffers() {
+    return this._load({ url: "offers" }).then(Api.toJSON);
+  }
+
+  getDestinations() {
+    return this._load({ url: "destinations" }).then(Api.toJSON);
   }
 
   updatePoint(point) {
