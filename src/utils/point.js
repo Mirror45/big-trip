@@ -4,8 +4,13 @@ export const isPointTime = (time) => {
   return time === null ? false : dayjs().isAfter(time, "D");
 };
 
-export const sortTime = (a, b) => a - b;
-export const sortPrice = (a, b) => a - b;
+export const sortDay = (a, b) =>
+  dayjs(a.startTime).diff() - dayjs(b.startTime).diff();
+
+export const sortTime = (a, b) =>
+  dayjs(b.startTime).diff() - dayjs(a.startTime).diff();
+
+export const sortPrice = (a, b) => b.price - a.price;
 
 export default class Time {
   constructor(time) {

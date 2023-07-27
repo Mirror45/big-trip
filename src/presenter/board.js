@@ -3,7 +3,7 @@ import PointListView from "../view/point-list.js";
 import NoPointView from "../view/no-point.js";
 import PointPresenter, { State } from "./point.js";
 import { render, RenderPosition, remove } from "../utils/render.js";
-import { sortPrice, sortTime } from "../utils/point.js";
+import { sortPrice, sortTime, sortDay } from "../utils/point.js";
 import { filter } from "../utils/filter.js";
 import { SortType, UpdateType, UserAction } from "../const.js";
 
@@ -27,6 +27,7 @@ export default class Board {
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init() {
@@ -48,6 +49,8 @@ export default class Board {
     const filtredPoints = filter[filterType](points);
 
     switch (this._currentSortType) {
+      case SortType.DAY:
+        return filtredPoints.sort(sortDay);
       case SortType.PRICE:
         return filtredPoints.sort(sortPrice);
       case SortType.TIME:
@@ -163,7 +166,7 @@ export default class Board {
   _clearBoard({ resetRenderedPointCount = false, resetSortType = false } = {}) {
     const pointCount = this._getPoints().length;
 
-    //this._taskNewPresenter.destroy();
+    //this._pointNewPresenter.destroy();
     Object.values(this._pointPresenter).forEach((presenter) =>
       presenter.destroy()
     );

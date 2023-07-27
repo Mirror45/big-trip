@@ -1,5 +1,6 @@
 import MenuView from "./view/menu.js";
 import BoardPresenter from "./presenter/board.js";
+import FilterPresenter from "./presenter/filter.js";
 import PointsModel from "./model/points.js";
 import FilterModel from "./model/filter.js";
 import { render, RenderPosition } from "./utils/render.js";
@@ -23,13 +24,20 @@ const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
 
 const Menu = new MenuView();
+
 const boardPresenter = new BoardPresenter(
   siteTripEvents,
   pointsModel,
   filterModel,
   api
 );
+const filterPresenter = new FilterPresenter(
+  siteTripControlsFilters,
+  filterModel,
+  pointsModel
+);
 
+filterPresenter.init();
 boardPresenter.init();
 
 api

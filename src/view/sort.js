@@ -53,9 +53,8 @@ export default class Sort extends AbstractView {
     if (evt.target.tagName !== "INPUT") {
       return;
     }
-
     evt.preventDefault();
-    this._callback.sortTypeChange(evt.target.dataset.sortType);
+    this._callback.sortTypeChange(evt.target.value.match(/\w+$/)[0]);
   }
 
   setSortTypeChangeHandler(callback) {
