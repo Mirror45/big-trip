@@ -8,7 +8,7 @@ export const sortDay = (a, b) =>
   dayjs(a.startTime).diff() - dayjs(b.startTime).diff();
 
 export const sortTime = (a, b) =>
-  dayjs(b.startTime).diff() - dayjs(a.startTime).diff();
+  dayjs(b.endTime).diff() - dayjs(a.endTime).diff();
 
 export const sortPrice = (a, b) => b.price - a.price;
 
