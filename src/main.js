@@ -5,8 +5,11 @@ import { createSortTemplate } from './view/sort.js';
 import { createEventsListTemplate } from './view/events-list.js';
 import { createEventEditTemplate } from './view/event-edit.js';
 import { createEventTemplate } from './view/event.js';
+import { generateEvent } from './mock/event.js';
 
-const EVENT_COUNT = 3;
+const EVENT_COUNT = 20;
+
+const events = new Array(EVENT_COUNT).fill(null).map(generateEvent);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -29,8 +32,8 @@ render(eventsElement, createEventsListTemplate(), 'beforeend');
 
 const eventsListElement = siteMainElement.querySelector('.trip-events__list');
 
-render(eventsListElement, createEventEditTemplate(), 'beforeend');
+render(eventsListElement, createEventEditTemplate(events[0]), 'beforeend');
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  render(eventsListElement, createEventTemplate(), 'beforeend');
+for (let i = 1; i < EVENT_COUNT; i++) {
+  render(eventsListElement, createEventTemplate(events[i]), 'beforeend');
 }
