@@ -1,9 +1,10 @@
-import { getFormat } from '../util.js';
+import { getFormat, createElement } from '../util.js';
 import { TYPE, OFFERS, CITY } from '../const.js';
 
 const createTypeItemTempalte = (type) => {
   return TYPE.map((e) => {
     const checked = type == e ? ' checked' : '';
+
     return `<div class="event__type-item">
                   <input id="event-type-${e}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${e}"${checked}>
                   <label class="event__type-label  event__type-label--${e}" for="event-type-${e}-1">${e[0].toUpperCase() + e.slice(1)}</label>
@@ -11,18 +12,11 @@ const createTypeItemTempalte = (type) => {
   }).join('');
 };
 
-const createDestinationListTempalte = () => {
-  return CITY.map((e) => {
-    return `<option value="${e}"></option>`;
-  }).join('');
-};
-
 const createOfferSelectorTemplate = (offers) => {
+
   return OFFERS.map(({ title, price }) => {
     const id = title.match(/\w+$/);
-    const checked = offers.some((e) => {
-      return e.title == title;
-    }) ? ' checked' : '';
+    const checked = offers.some((e) => e.title == title) ? ' checked' : '';
 
     return `<div class="event__offer-selector">
                   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}"${checked}>
@@ -39,14 +33,12 @@ const createPhotosTapeTemplate = ({ pictures }) => {
   if (!pictures.length) return '';
   return `<div class="event__photos-container">
                 <div class="event__photos-tape">
-                  ${pictures.map(({ src, description }) => {
-    return `<img class="event__photo" src="${src}" alt="${description}">`;
-  }).join('')}
+                  ${pictures.map(({ src, description }) => `<img class="event__photo" src="${src}" alt="${description}">`).join('')}
                 </div>
               </div>`;
 };
 
-export const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, offers, type }) => {
+const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, offers, type }) => {
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -71,7 +63,7 @@ export const createEventEditTemplate = ({ totalPrice, startTime, endTime, destin
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
                     <datalist id="destination-list-1">
-                      ${createDestinationListTempalte()}
+                      ${CITY.map((city) => `<option value="${city}"></option>`).join('')}
                     </datalist>
                   </div>
 
@@ -114,3 +106,27 @@ export const createEventEditTemplate = ({ totalPrice, startTime, endTime, destin
               </form>
             </li>`;
 };
+
+export default class EventEdit {
+  constructor(event) {
+    this._event = event;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -3,7 +3,7 @@ import { getRandomInteger } from '../util.js';
 import { TYPE, OFFERS, CITY } from '../const.js';
 
 const generateDate = () => {
-  const start = dayjs().add(getRandomInteger(3), 'day').toDate()
+  const start = dayjs().add(getRandomInteger(-3, 3), 'day').toDate()
   return { start, end: dayjs(start).add(getRandomInteger(180), 'minute').toDate() };
 };
 

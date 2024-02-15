@@ -1,19 +1,18 @@
-import { getFormat, getTime } from '../util.js';
+import { getFormat, getTime, createElement } from '../util.js';
 
 const createOffersTemplate = (offers) => {
   if (!offers.length) return '';
   return `<h4 class="visually-hidden">Offers:</h4>
               <ul class="event__selected-offers">
-                ${offers.map(({ title, price }) => {
-    return `<li class="event__offer">
+                ${offers.map(({ title, price }) => `<li class="event__offer">
                   <span class="event__offer-title">${title}</span>
                     +€&nbsp;
                   <span class="event__offer-price">${price}</span>
-                </li>`}).join('')}
+                </li>`).join('')}
               </ul>`;
 };
 
-export const createEventTemplate = ({ totalPrice, startTime, endTime, destination, isFavorite, offers, type }) => {
+const createEventTemplate = ({ totalPrice, startTime, endTime, destination, isFavorite, offers, type }) => {
   const startFormat = getFormat(startTime);
   const endFormat = getFormat(endTime);
   const favoriteClassName = isFavorite ? ' event__favorite-btn--active' : '';
@@ -48,4 +47,28 @@ export const createEventTemplate = ({ totalPrice, startTime, endTime, destinatio
                 </button>
               </div>
             </li>`;
+};
+
+export default class Event {
+  constructor(event) {
+    this._event = event;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
 };
