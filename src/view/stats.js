@@ -39,4 +39,4 @@ export default class Stats {
   removeElement() {
     this._element = null;
   }
-};
+}

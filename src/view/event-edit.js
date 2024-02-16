@@ -8,7 +8,7 @@ const createTypeItemTempalte = (type) => {
     return `<div class="event__type-item">
                   <input id="event-type-${e}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${e}"${checked}>
                   <label class="event__type-label  event__type-label--${e}" for="event-type-${e}-1">${e[0].toUpperCase() + e.slice(1)}</label>
-                </div>`
+                </div>`;
   }).join('');
 };
 
@@ -27,7 +27,7 @@ const createOfferSelectorTemplate = (offers) => {
                   </label>
                 </div>`;
   }).join('');
-}
+};
 
 const createPhotosTapeTemplate = ({ pictures }) => {
   if (!pictures.length) return '';
@@ -69,10 +69,10 @@ const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, 
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormat(startTime).YMDHm}">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormat(startTime).ymdhm}">
                     —
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormat(endTime).YMDHm}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormat(endTime).ymdhm}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">

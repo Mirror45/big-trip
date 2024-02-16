@@ -71,4 +71,4 @@ export default class Event {
   removeElement() {
     this._element = null;
   }
-};
+}

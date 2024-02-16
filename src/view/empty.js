@@ -24,4 +24,4 @@ export default class Empty {
   removeElement() {
     this._element = null;
   }
-};
+}
