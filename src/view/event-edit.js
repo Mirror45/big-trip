@@ -1,4 +1,5 @@
-import { getFormat, createElement } from '../util.js';
+import Abstract from './abstract.js';
+import { getFormat } from '../utils/event.js';
 import { TYPE, OFFERS, CITY } from '../const.js';
 
 const createTypeItemTempalte = (type) => {
@@ -107,26 +108,33 @@ const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, 
             </li>`;
 };
 
-export default class EventEdit {
+export default class EventEdit extends Abstract {
   constructor(event) {
+    super();
     this._event = event;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
   }
 }

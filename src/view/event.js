@@ -1,4 +1,5 @@
-import { getFormat, getTime, createElement } from '../util.js';
+import Abstract from './abstract.js';
+import { getFormat, getTime } from '../utils/event.js';
 
 const createOffersTemplate = (offers) => {
   if (!offers.length) return '';
@@ -49,26 +50,23 @@ const createEventTemplate = ({ totalPrice, startTime, endTime, destination, isFa
             </li>`;
 };
 
-export default class Event {
+export default class Event extends Abstract {
   constructor(event) {
+    super();
     this._event = event;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createEventTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
   }
 
-  removeElement() {
-    this._element = null;
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }

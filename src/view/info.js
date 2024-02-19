@@ -1,4 +1,5 @@
-import { createElement, sortDay, getFormat } from '../util.js';
+import Abstract from './abstract.js';
+import { sortDay, getFormat } from '../utils/event.js';
 
 const createInfoTemplate = (events) => {
   const city = new Set();
@@ -21,26 +22,13 @@ const createInfoTemplate = (events) => {
           </section>`;
 };
 
-export default class Info {
+export default class Info extends Abstract {
   constructor(events) {
+    super();
     this._events = events;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createInfoTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

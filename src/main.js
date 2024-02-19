@@ -8,11 +8,11 @@ import EventView from './view/event.js';
 import EmptyView from './view/empty.js';
 import StatsView from './view/stats.js';
 import { generateEvent } from './mock/event.js';
-import { render, RenderPosition, sortDay } from './util.js';
+import { RenderPosition, render, replace } from './utils/render.js';
 
 const EVENT_COUNT = 20;
 
-const events = new Array(EVENT_COUNT).fill(null).map(generateEvent).sort(sortDay);
+const events = new Array(EVENT_COUNT).fill(null).map(generateEvent);
 
 const siteHeaderElement = document.querySelector('.page-header');
 const headerMainElement = siteHeaderElement.querySelector('.trip-main');
@@ -26,11 +26,11 @@ const renderEvent = (eventListElement, event) => {
   const eventEditComponent = new EventEditView(event);
 
   const replaceCardToForm = () => {
-    eventListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    eventListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -41,18 +41,17 @@ const renderEvent = (eventListElement, event) => {
     }
   };
 
-  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  eventComponent.setEditClickHandler(() => {
     replaceCardToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  eventEditComponent.setEditClickHandler(() => {
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
@@ -77,7 +76,7 @@ const renderTable = (tableContainer, tableEvents) => {
   });
 };
 
-const renderStats = (statsContainer, statsEvents) => {
+export const renderStats = (statsContainer, statsEvents) => {
   if (statsEvents.length === 0) {
     render(statsContainer, new EmptyView().getElement(), RenderPosition.BEFOREEND);
     return;
