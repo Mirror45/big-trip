@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 import { getRandomInteger } from '../utils/common.js';
 import { TYPE, OFFERS, CITY } from '../const.js';
 
@@ -24,6 +25,7 @@ const generateEvent = () => {
   const offers = getRandomOffer();
 
   return {
+    id: nanoid(),
     totalPrice: getRandomInteger(300) + offers.reduce((a, { price }) => a + price, 0),
     startTime: date.start,
     endTime: date.end,

@@ -112,6 +112,8 @@ export default class EventEdit extends Abstract {
   constructor(event) {
     super();
     this._event = event;
+    this._editClickHandler = this._editClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
