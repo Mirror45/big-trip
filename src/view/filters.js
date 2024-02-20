@@ -16,7 +16,23 @@ const createFiltersTemplate = () => {
 };
 
 export default class Filter extends Abstract {
+  constructor() {
+    super();
+    this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+  }
+
   getTemplate() {
     return createFiltersTemplate();
+  }
+
+  _filterTypeChangeHandler(evt) {
+    this._callback.filterTypeChange(evt.target.value);
+  }
+
+  setFilterTypeChangeHandler(callback) {
+    this._callback.filterTypeChange = callback;
+    this.getElement().querySelectorAll('input').forEach((elem) => {
+      elem.addEventListener('change', this._filterTypeChangeHandler);
+    });
   }
 }

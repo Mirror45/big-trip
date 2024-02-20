@@ -25,4 +25,20 @@ const sortDay = (a, b) => {
   return dayjs(a.startTime).diff(b.startTime);
 };
 
-export { getTime, getFormat, sortDay };
+const sortTime = (a, b) => {
+  return dayjs(b.endTime).diff(b.startTime) - dayjs(a.endTime).diff(a.startTime);
+};
+
+const sortPrice = (a, b) => {
+  return b.totalPrice - a.totalPrice;
+};
+
+const filterFuture = ({ startTime }) => {
+  return dayjs().diff(startTime) < 0;
+};
+
+const filterPast = ({ endTime }) => {
+  return dayjs().diff(endTime) >= 0;
+};
+
+export { getTime, getFormat, sortDay, sortTime, sortPrice, filterFuture, filterPast };
