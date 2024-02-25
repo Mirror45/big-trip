@@ -69,6 +69,7 @@ export default class Event extends Abstract {
 
   _favoriteClickHandler(evt) {
     evt.preventDefault();
+    evt.currentTarget.classList.toggle('event__favorite-btn--active');
     this._callback.favoriteClick();
   }
 

@@ -1,6 +1,7 @@
-import Abstract from './abstract.js';
-import { getFormat } from '../utils/event.js';
+import Smart from './smart.js';
 import { TYPE, OFFERS, CITY } from '../const.js';
+import flatpickr from 'flatpickr';
+import '../../node_modules/flatpickr/dist/flatpickr.min.js';
 
 const createTypeItemTempalte = (type) => {
   return TYPE.map((e) => {
@@ -39,7 +40,7 @@ const createPhotosTapeTemplate = ({ pictures }) => {
               </div>`;
 };
 
-const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, offers, type }) => {
+const createEventEditTemplate = ({ totalPrice, destination, offers, type }) => {
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -70,10 +71,10 @@ const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, 
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormat(startTime).ymdhm}">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
                     —
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormat(endTime).ymdhm}">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -108,16 +109,115 @@ const createEventEditTemplate = ({ totalPrice, startTime, endTime, destination, 
             </li>`;
 };
 
-export default class EventEdit extends Abstract {
+export default class EventEdit extends Smart {
   constructor(event) {
     super();
-    this._event = event;
+    this._event = EventEdit.parseEventToData(event);
+    this._startDatepicker = null;
+    this._endDatepicker = null;
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._cityInputHandler = this._cityInputHandler.bind(this);
+    this._startChangeHandler = this._startChangeHandler.bind(this);
+    this._endChangeHandler = this._endChangeHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
+    this._setInnerHandlers();
+    this._setStartDatepiker();
+    this._setEndDatepiker();
+  }
+
+  reset(event) {
+    this.updateData(EventEdit.parseEventToData(event));
   }
 
   getTemplate() {
     return createEventEditTemplate(this._event);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this._setStartDatepiker();
+    this._setEndDatepiker();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setStartDatepiker() {
+    if (this._startDatepicker) {
+      this._startDatepicker.destroy();
+      this._startDatepicker = null;
+    }
+
+
+    this._startDatepicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        dateFormat: 'y/m/d H:i',
+        defaultDate: this._event.startTime,
+        onChange: this._startChangeHandler,
+      },
+    );
+  }
+
+  _setEndDatepiker() {
+    if (this._endDatepicker) {
+      this._endDatepicker.destroy();
+      this._endDatepicker = null;
+    }
+
+
+    this._endDatepicker = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        dateFormat: 'y/m/d H:i',
+        defaultDate: this._event.endTime,
+        onChange: this._endChangeHandler,
+      },
+    );
+  }
+
+  _cityInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({ destination: { ...this._event.destination, name: evt.target.value } }, true);
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      totalPrice: evt.target.value,
+    }, true);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceInputHandler);
+    this.getElement().querySelector('#event-destination-1').addEventListener('input', this._cityInputHandler);
+    this.getElement().querySelector('.event__section--offers').addEventListener('change', this._offerChangeHandler);
+  }
+
+  _startChangeHandler([startTime]) {
+    this.updateData({
+      startTime,
+    });
+  }
+
+  _endChangeHandler([endTime]) {
+    this.updateData({
+      endTime,
+    });
+  }
+
+  _offerChangeHandler(evt) {
+    evt.preventDefault();
+    const offers = [];
+    const title = evt.target.parentElement.querySelector('.event__offer-title').textContent;
+
+    if (evt.target.checked) offers.push(OFFERS.find((item) => item.title == title));
+
+    this._event.offers.forEach((item) => {
+      if (title != item.title) offers.push(item);
+    });
+
+    this.updateData({ offers }, true);
   }
 
   _editClickHandler(evt) {
@@ -127,7 +227,7 @@ export default class EventEdit extends Abstract {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(EventEdit.parseDataToEvent(this._event));
   }
 
   setEditClickHandler(callback) {
@@ -138,5 +238,13 @@ export default class EventEdit extends Abstract {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  static parseEventToData(event) {
+    return Object.assign({}, event);
+  }
+
+  static parseDataToEvent(event) {
+    return Object.assign({}, event);
   }
 }

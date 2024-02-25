@@ -24,9 +24,30 @@ export default class Event {
 
   init(event) {
     this._event = event;
+    const prevEventCompoment = this._eventComponent;
+    const prevEventEditComponent = this._eventEditComponent;
     this._eventComponent = new EventView(event);
     this._eventEditComponent = new EventEditView(event);
-    render(this._eventsListContainer, this._eventComponent, RenderPosition.BEFOREEND);
+    this._eventComponent.setEditClickHandler(this._handleEditClick);
+    this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventEditComponent.setEditClickHandler(this._handleClick);
+    this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+
+    if (prevEventCompoment === null || prevEventEditComponent === null) {
+      render(this._eventsListContainer, this._eventComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    if (this._mode === Mode.DEFAULT) {
+      replace(this._eventComponent, prevEventCompoment);
+    }
+
+    if (this._mode === Mode.EDITING) {
+      replace(this._eventEditComponent, prevEventEditComponent);
+    }
+
+    remove(prevEventCompoment);
+    remove(prevEventEditComponent);
   }
 
   destroy() {
@@ -56,6 +77,7 @@ export default class Event {
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this._eventEditComponent.reset(this._event);
       this._replaceFormToCard();
     }
   }

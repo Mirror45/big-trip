@@ -16,7 +16,6 @@ const getFormat = (data) => {
     MD: format('MMM DD'),
     YMDHM: format('YYYY-MM-DDTHH:mm'),
     HM: format('HH:mm'),
-    ymdhm: format('YY/MM/DD HH:mm'),
     D: format('DD'),
   };
 };
