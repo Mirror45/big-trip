@@ -1,10 +1,10 @@
 import Abstract from './abstract.js';
 import { FILTER } from '../const.js';
 
-const createFiltersTemplate = () => {
+const createFiltersTemplate = (currentFilterType = FILTER.EVERYTHING) => {
   return `<form class="trip-filters" action="#" method="get">
                 ${Object.values(FILTER).map((filter) => {
-    const checked = filter == FILTER.EVERYTHING ? ' checked' : '';
+    const checked = filter == currentFilterType ? ' checked' : '';
 
     return `<div class="trip-filters__filter">
                   <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}"${checked}>
@@ -16,13 +16,14 @@ const createFiltersTemplate = () => {
 };
 
 export default class Filter extends Abstract {
-  constructor() {
+  constructor(currentFilterType) {
     super();
+    this._currentFilter = currentFilterType;
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createFiltersTemplate();
+    return createFiltersTemplate(this._currentFilter);
   }
 
   _filterTypeChangeHandler(evt) {
@@ -31,8 +32,6 @@ export default class Filter extends Abstract {
 
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
-    this.getElement().querySelectorAll('input').forEach((elem) => {
-      elem.addEventListener('change', this._filterTypeChangeHandler);
-    });
+    this.getElement().addEventListener('change', this._filterTypeChangeHandler);
   }
 }

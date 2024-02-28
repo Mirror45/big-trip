@@ -1,6 +1,7 @@
 import EventEditView from '../view/event-edit.js';
 import EventView from '../view/event.js';
 import { render, RenderPosition, replace, remove } from '../utils/render.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -20,6 +21,7 @@ export default class Event {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event) {
@@ -32,6 +34,7 @@ export default class Event {
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setEditClickHandler(this._handleClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventCompoment === null || prevEventEditComponent === null) {
       render(this._eventsListContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -105,5 +108,11 @@ export default class Event {
   _handleFormSubmit(event) {
     this._changeData(event);
     this._replaceFormToCard();
+  }
+
+  _handleDeleteClick(event) {
+    this._changeData(
+      event,
+    );
   }
 }

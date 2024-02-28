@@ -3,13 +3,15 @@ import SortView from '../view/sort.js';
 import EventListView from '../view/events-list.js';
 import EmptyView from '../view/empty.js';
 import EventPresenter from './event.js';
+import EventNewPresenter from './event-new.js';
 import { updateItem } from '../utils/common.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
 import { sortDay, sortTime, sortPrice } from '../utils/event.js';
-import { SORT } from '../const.js';
+import { SORT, FILTER, UpdateType, UserAction } from '../const.js';
 
 export default class Table {
-  constructor(tableContainer, infoContainer) {
+  constructor(tableContainer, infoContainer, eventModel) {
+    this._eventModel = eventModel;
     this._tableContainer = tableContainer;
     this._infoContainer = infoContainer;
     this._eventPresenter = {};
@@ -21,6 +23,8 @@ export default class Table {
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._eventModel.addObserver(this._handleModelEvent);
+    this._eventNewPresenter = new EventNewPresenter(this._eventListCompoment, this._handleViewAction);
   }
 
   init(tableEvent) {

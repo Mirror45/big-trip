@@ -3,10 +3,10 @@ import { SORT } from '../const.js';
 
 const sort = ['day', 'event', 'time', 'price', 'offer'];
 
-const createSortTemplate = () => {
+const createSortTemplate = (currentSortType = SORT.DAY) => {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
                 ${sort.map((type) => {
-    const status = type == SORT.DAY ? ' checked' : Object.values(SORT).includes(type) ? '' : ' disabled';
+    const status = type == currentSortType ? ' checked' : Object.values(SORT).includes(type) ? '' : ' disabled';
 
     return `<div class="trip-sort__item  trip-sort__item--${type}">
                   <input id="sort-${type}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${type}"${status}>
@@ -17,13 +17,14 @@ const createSortTemplate = () => {
 };
 
 export default class Sort extends Abstract {
-  constructor() {
+  constructor(currentSortType) {
     super();
+    this._currentSortType = currentSortType;
     this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createSortTemplate();
+    return createSortTemplate(this._currentSortType);
   }
 
   _sortTypeChangeHandler(evt) {
@@ -32,8 +33,6 @@ export default class Sort extends Abstract {
 
   setSortTypeChangeHandler(callback) {
     this._callback.sortTypeChange = callback;
-    this.getElement().querySelectorAll('input').forEach((elem) => {
-      elem.addEventListener('change', this._sortTypeChangeHandler);
-    });
+    this.getElement().addEventListener('change', this._sortTypeChangeHandler);
   }
 }
