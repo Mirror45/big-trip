@@ -27,7 +27,7 @@ render(filtersElement, filterComponent, RenderPosition.BEFOREEND);
 
 tablePresenter.init();
 
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+infoElement.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
   evt.preventDefault();
   tablePresenter.createEvent();
 });

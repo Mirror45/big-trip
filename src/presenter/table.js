@@ -26,20 +26,18 @@ export default class Table {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
     this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
-    this._eventModel.addObserver(this._handleModelEvent);
     this._eventNewPresenter = new EventNewPresenter(this._eventListCompoment, this._handleViewAction);
   }
 
   init() {
     this._filterCompoment.setFilterTypeChangeHandler(this._handleFilterTypeChange);
     render(this._tableContainer, this._eventListCompoment, RenderPosition.BEFOREEND);
+    this._eventModel.addObserver(this._handleModelEvent);
     this._renderTable();
   }
 
-  createEvent() {
-    this._currentFilterType = FILTER.EVERYTHING;
-    this._currentSortType = SORT.DAY;
-    this._eventNewPresenter.init();
+  createEvent(callback) {
+    this._eventNewPresenter.init(callback);
   }
 
   _getEvents() {

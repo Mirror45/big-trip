@@ -34,4 +34,9 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { TYPE, OFFERS, CITY, FILTER, SORT, UserAction, UpdateType };
+const MENU = {
+  TABLE: 'Table',
+  STATS: 'Stats',
+};
+
+export { TYPE, OFFERS, CITY, FILTER, SORT, UserAction, UpdateType, MENU };
