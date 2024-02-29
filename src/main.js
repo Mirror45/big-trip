@@ -19,14 +19,15 @@ const filtersElement = siteHeaderElement.querySelector('.trip-controls__filters'
 const siteMainElement = document.querySelector('.page-main');
 const eventsElement = siteMainElement.querySelector('.trip-events');
 
-const tablePresenter = new TablePresenter(eventsElement, infoElement, eventModel);
+const filterComponent = new FilterView();
+const tablePresenter = new TablePresenter(eventsElement, infoElement, eventModel, filterComponent);
 
 render(navigationElement, new MenuView(), RenderPosition.BEFOREEND);
-render(filtersElement, new FilterView(), RenderPosition.BEFOREEND);
+render(filtersElement, filterComponent, RenderPosition.BEFOREEND);
 
-tablePresenter.init(events);
+tablePresenter.init();
 
 document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
   evt.preventDefault();
-  //
+  tablePresenter.createEvent();
 });

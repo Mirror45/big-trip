@@ -14,7 +14,7 @@ const createOffersTemplate = (offers) => {
               </ul>`;
 };
 
-const createEventTemplate = ({ totalPrice, startTime, endTime, destination, isFavorite, offers, type }) => {
+const createEventTemplate = ({ price, startTime, endTime, destination, isFavorite, offers, type }) => {
   const startFormat = getFormat(startTime);
   const endFormat = getFormat(endTime);
   const favoriteClassName = isFavorite ? ' event__favorite-btn--active' : '';
@@ -35,7 +35,7 @@ const createEventTemplate = ({ totalPrice, startTime, endTime, destination, isFa
                   <p class="event__duration">${getTime(startTime, endTime)}</p>
                 </div>
                 <p class="event__price">
-                  €&nbsp;<span class="event__price-value">${totalPrice}</span>
+                  €&nbsp;<span class="event__price-value">${price}</span>
                 </p>
                 ${createOffersTemplate(offers)}
                 <button class="event__favorite-btn${favoriteClassName}" type="button">

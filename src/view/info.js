@@ -3,9 +3,9 @@ import { getFormat } from '../utils/event.js';
 
 const createInfoTemplate = (events) => {
   const city = new Set();
-  const price = events.reduce((a, { totalPrice, destination }) => {
+  const totalPrice = events.reduce((a, { price, destination }) => {
     city.add(destination.name);
-    return a + totalPrice;
+    return a + price;
   }, 0);
 
   return `<section class="trip-main__trip-info  trip-info">
@@ -16,7 +16,7 @@ const createInfoTemplate = (events) => {
             </div>
 
             <p class="trip-info__cost">
-              Total: €&nbsp;<span class="trip-info__cost-value">${price}</span>
+              Total: €&nbsp;<span class="trip-info__cost-value">${totalPrice}</span>
             </p>
           </section>`;
 };

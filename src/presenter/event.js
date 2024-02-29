@@ -95,6 +95,8 @@ export default class Event {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._event,
@@ -106,12 +108,18 @@ export default class Event {
   }
 
   _handleFormSubmit(event) {
-    this._changeData(event);
+    this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.PATCH,
+      event,
+    );
     this._replaceFormToCard();
   }
 
   _handleDeleteClick(event) {
     this._changeData(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
       event,
     );
   }

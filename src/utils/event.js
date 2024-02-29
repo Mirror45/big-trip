@@ -29,7 +29,7 @@ const sortTime = (a, b) => {
 };
 
 const sortPrice = (a, b) => {
-  return b.totalPrice - a.totalPrice;
+  return b.price - a.price;
 };
 
 const filterFuture = ({ startTime }) => {

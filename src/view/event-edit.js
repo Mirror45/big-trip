@@ -5,8 +5,6 @@ import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.js';
 import { generateEvent } from '../mock/event.js';
 
-const BLANK_EVENT = generateEvent();
-
 const createTypeItemTempalte = (type) => {
   return TYPE.map((e) => {
     const checked = type == e ? ' checked' : '';
@@ -44,7 +42,7 @@ const createPhotosTapeTemplate = ({ pictures }) => {
               </div>`;
 };
 
-const createEventEditTemplate = ({ totalPrice, destination, offers, type }) => {
+const createEventEditTemplate = ({ price, destination, offers, type }) => {
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -86,7 +84,7 @@ const createEventEditTemplate = ({ totalPrice, destination, offers, type }) => {
                       <span class="visually-hidden">Price</span>
                       €
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${totalPrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
                   </div>
 
                   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -114,7 +112,7 @@ const createEventEditTemplate = ({ totalPrice, destination, offers, type }) => {
 };
 
 export default class EventEdit extends Smart {
-  constructor(event = BLANK_EVENT) {
+  constructor(event = generateEvent()) {
     super();
     this._event = EventEdit.parseEventToData(event);
     this._startDatepicker = null;
@@ -162,6 +160,7 @@ export default class EventEdit extends Smart {
         dateFormat: 'y/m/d H:i',
         defaultDate: this._event.startTime,
         onChange: this._startChangeHandler,
+        enableTime: true,
       },
     );
   }
@@ -179,6 +178,7 @@ export default class EventEdit extends Smart {
         dateFormat: 'y/m/d H:i',
         defaultDate: this._event.endTime,
         onChange: this._endChangeHandler,
+        enableTime: true,
       },
     );
   }
@@ -198,7 +198,7 @@ export default class EventEdit extends Smart {
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      totalPrice: evt.target.value,
+      price: evt.target.value,
     }, true);
   }
 

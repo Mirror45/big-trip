@@ -26,7 +26,7 @@ const generateEvent = () => {
 
   return {
     id: nanoid(),
-    totalPrice: getRandomInteger(300) + offers.reduce((a, { price }) => a + price, 0),
+    price: getRandomInteger(300) + offers.reduce((a, { price }) => a + price, 0),
     startTime: date.start,
     endTime: date.end,
     destination: {
