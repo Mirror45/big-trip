@@ -36,8 +36,21 @@ export default class Table {
     this._renderTable();
   }
 
-  createEvent(callback) {
-    this._eventNewPresenter.init(callback);
+  destroy() {
+    this._clearTable({ reset: true });
+
+    remove(this._eventListCompoment);
+    remove(this._sortComponent);
+
+    this._eventModel.removeObserver(this._handleModelEvent);
+  }
+
+  createEvent() {
+    this._eventNewPresenter.init();
+  }
+
+  setNewClickHandle(callback) {
+    this._infoContainer.querySelector('.trip-main__event-add-btn').addEventListener('click', callback);
   }
 
   _getEvents() {

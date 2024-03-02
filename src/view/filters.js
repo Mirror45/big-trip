@@ -20,6 +20,7 @@ export default class Filter extends Abstract {
     super();
     this._currentFilter = currentFilterType;
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   getTemplate() {
@@ -33,5 +34,11 @@ export default class Filter extends Abstract {
   setFilterTypeChangeHandler(callback) {
     this._callback.filterTypeChange = callback;
     this.getElement().addEventListener('change', this._filterTypeChangeHandler);
+  }
+
+  reset() {
+    this._currentFilter = FILTER.EVERYTHING;
+    this.getElement().querySelector('.trip-filters__filter-input').checked = true;
+    this.getElement().removeEventListener('change', this._filterTypeChangeHandler);
   }
 }

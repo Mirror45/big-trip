@@ -1,7 +1,7 @@
 import Abstract from './abstract.js';
 import { MENU } from '../const.js';
 
-const createMenuTemplate = (menu = MENU.TABLE) => {
+const createMenuTemplate = (menu) => {
   return `<nav class="trip-controls__trip-tabs  trip-tabs">
             ${Object.values(MENU).map((type) => {
     const active = type == menu ? ' trip-tabs__btn--active' : '';
@@ -11,10 +11,11 @@ const createMenuTemplate = (menu = MENU.TABLE) => {
 };
 
 export default class Menu extends Abstract {
-  constructor(type) {
+  constructor(type = MENU.TABLE) {
     super();
     this._type = type;
     this._menuClickHandler = this._menuClickHandler.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   getTemplate() {
@@ -22,16 +23,26 @@ export default class Menu extends Abstract {
   }
 
   _menuClickHandler(evt) {
-    if (evt.target.tagName !== 'A') {
+    const type = evt.target.textContent;
+    if (evt.target.tagName !== 'A' || this._type === type) {
       return;
     }
 
     evt.preventDefault();
-    this._callback.menuClick(evt.target.textContent);
+    this.getElement().querySelector('.trip-tabs__btn--active').classList.remove('trip-tabs__btn--active');
+    evt.target.classList.add('trip-tabs__btn--active');
+    this._type = type;
+    this._callback.menuClick(type);
   }
 
   setMenuClickHandler(callback) {
     this._callback.menuClick = callback;
     this.getElement().addEventListener('click', this._menuClickHandler);
+  }
+
+  reset() {
+    this._type = MENU.TABLE;
+    this.getElement().querySelector('.trip-tabs__btn--active').classList.remove('trip-tabs__btn--active');
+    this.getElement().querySelector('.trip-tabs__btn').classList.add('trip-tabs__btn--active');
   }
 }
