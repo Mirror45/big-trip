@@ -2,6 +2,7 @@ import InfoView from '../view/info.js';
 import SortView from '../view/sort.js';
 import EventListView from '../view/events-list.js';
 import EmptyView from '../view/empty.js';
+import LoadingView from '../view/loading.js';
 import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
@@ -9,18 +10,21 @@ import { sortDay, sortTime, sortPrice, filterFuture, filterPast } from '../utils
 import { SORT, FILTER, UpdateType, UserAction } from '../const.js';
 
 export default class Table {
-  constructor(tableContainer, infoContainer, eventModel, filterComponent) {
+  constructor(tableContainer, infoContainer, eventModel, filterComponent, api) {
     this._eventModel = eventModel;
     this._tableContainer = tableContainer;
     this._infoContainer = infoContainer;
     this._eventPresenter = {};
     this._currentFilterType = FILTER.EVERYTHING;
     this._currentSortType = SORT.DAY;
+    this._isLoading = true;
+    this._api = api;
     this._infoComponent = null;
     this._filterCompoment = filterComponent;
     this._sortComponent = new SortView();
     this._eventListCompoment = new EventListView();
     this._emptyComponent = new EmptyView();
+    this._loadingComponent = new LoadingView();
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -30,6 +34,7 @@ export default class Table {
   }
 
   init() {
+    this._filterCompoment.reset();
     this._filterCompoment.setFilterTypeChangeHandler(this._handleFilterTypeChange);
     render(this._tableContainer, this._eventListCompoment, RenderPosition.BEFOREEND);
     this._eventModel.addObserver(this._handleModelEvent);
@@ -38,9 +43,11 @@ export default class Table {
 
   destroy() {
     this._clearTable({ reset: true });
+    this._filterCompoment.reset();
 
     remove(this._eventListCompoment);
     remove(this._sortComponent);
+    this._renderInfo();
 
     this._eventModel.removeObserver(this._handleModelEvent);
   }
@@ -86,7 +93,9 @@ export default class Table {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this._eventModel.updateEvent(updateType, update);
+        this._api.updateEvent(update).then((response) => {
+          this._eventModel.updateEvent(updateType, response);
+        });
         break;
       case UserAction.ADD_EVENT:
         this._eventModel.addEvent(updateType, update);
@@ -108,6 +117,11 @@ export default class Table {
         break;
       case UpdateType.MAJOR:
         this._clearTable({ reset: true });
+        this._renderTable();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        this._clearTable();
         this._renderTable();
         break;
     }
@@ -138,7 +152,12 @@ export default class Table {
     render(this._tableContainer, this._emptyComponent, RenderPosition.BEFOREEND);
   }
 
+  _renderLoading() {
+    render(this._tableContainer, this._loadingComponent, RenderPosition.BEFOREEND);
+  }
+
   _renderInfo() {
+    remove(this._infoComponent);
     const events = this._eventModel.getEvents().slice().sort(sortDay);
     this._infoComponent = new InfoView(events);
     render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
@@ -171,7 +190,7 @@ export default class Table {
     this._eventPresenter = {};
 
     remove(this._emptyComponent);
-    remove(this._infoComponent);
+    remove(this._loadingComponent);
 
     if (reset) {
       this._currentFilterType = FILTER.EVERYTHING;
@@ -180,6 +199,11 @@ export default class Table {
   }
 
   _renderTable() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const events = this._getEvents();
     const eventCount = events.length;
 
