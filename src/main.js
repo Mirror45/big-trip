@@ -54,12 +54,12 @@ render(filtersElement, filterComponent, RenderPosition.BEFOREEND);
 
 tablePresenter.init();
 
-api.getEvents().then((events) => {
-  eventModel.setEvents(UpdateType.INIT, events);
+api.getData().then(([offers, destinations, events]) => {
+  eventModel.setEvents(UpdateType.INIT, events, offers, destinations);
   menuComponent.setMenuClickHandler(handleMenuClick);
   tablePresenter.setNewClickHandle(handleNewClick);
 }).catch(() => {
-  eventModel.setEvents(UpdateType.INIT, []);
+  eventModel.setEvents(UpdateType.INIT, [], [], []);
   menuComponent.setMenuClickHandler(handleMenuClick);
   tablePresenter.setNewClickHandle(handleNewClick);
 });

@@ -24,6 +24,25 @@ export default class Api {
       .then((events) => events.map(EventModel.adaptToClient));
   }
 
+  getOffers() {
+    return this._load({ url: 'offers' })
+      .then(Api.toJSON);
+  }
+
+  getDestinations() {
+    return this._load({ url: 'destinations' })
+      .then(Api.toJSON);
+  }
+
+  getData() {
+    return Promise.all([
+      this.getOffers(),
+      this.getDestinations(),
+      this.getEvents(),
+    ])
+      .catch(Api.catchError);
+  }
+
   updateEvent(event) {
     return this._load({
       url: `points/${event.id}`,
