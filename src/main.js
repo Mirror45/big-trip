@@ -7,8 +7,8 @@ import { RenderPosition, render, remove } from './utils/render.js';
 import { MENU, UpdateType } from './const.js';
 import Api from './api.js';
 
-const AUTHORIZATION = 'Basic EvD824Rb92UsRefzK9';
-const END_POINT = 'https://14.ecmascript.htmlacademy.pro/big-trip/';
+const AUTHORIZATION = 'Basic 8ApA45dt37Sn6cSxU';
+const END_POINT = 'https://14.ecmascript.htmlacademy.pro/big-trip';
 
 const api = new Api(END_POINT, AUTHORIZATION);
 const eventModel = new EventModel();

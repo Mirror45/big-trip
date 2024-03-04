@@ -1,13 +1,27 @@
+import dayjs from 'dayjs';
 import he from 'he';
 import Smart from './smart.js';
-import { TYPE, OFFERS, CITY } from '../const.js';
+import { TYPE, OFFERS, CITY, DESCRIPTION, PICTURES } from '../const.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.js';
-import { generateEvent } from '../mock/event.js';
 
-const createTypeItemTempalte = (type) => {
+const BLANK_EVENT = {
+  price: 0,
+  startTime: dayjs().toDate(),
+  endTime: dayjs().toDate(),
+  destination: {
+    description: DESCRIPTION,
+    name: CITY[1],
+    pictures: PICTURES,
+  },
+  isFavorite: false,
+  offers: [],
+  type: TYPE[6],
+};
+
+const createTypeItemTempalte = (type, isDisabled) => {
   return TYPE.map((e) => {
-    const checked = type == e ? ' checked' : '';
+    const checked = isDisabled ? ' disabled' : type == e ? ' checked' : '';
 
     return `<div class="event__type-item">
                   <input id="event-type-${e}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${e}"${checked}>
@@ -16,11 +30,11 @@ const createTypeItemTempalte = (type) => {
   }).join('');
 };
 
-const createOfferSelectorTemplate = (offers) => {
+const createOfferSelectorTemplate = (offers, isDisabled) => {
 
   return OFFERS.map(({ title, price }) => {
     const id = title.match(/\w+$/);
-    const checked = offers.some((e) => e.title == title) ? ' checked' : '';
+    const checked = isDisabled ? ' disabled' : offers.some((e) => e.title == title) ? ' checked' : '';
 
     return `<div class="event__offer-selector">
                   <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}"${checked}>
@@ -42,7 +56,19 @@ const createPhotosTapeTemplate = ({ pictures }) => {
               </div>`;
 };
 
-const createEventEditTemplate = ({ price, destination, offers, type }) => {
+const createEventEditTemplate = ({
+  price,
+  destination,
+  offers,
+  type,
+  isDisabled,
+  isSaving,
+  isDeleting,
+}) => {
+  const disabled = isDeleting ? ' disabled' : '';
+  const save = isSaving ? 'Saving...' : 'Save';
+  const del = isDeleting ? 'Deleting...' : 'Delete';
+
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
                 <header class="event__header">
@@ -51,12 +77,12 @@ const createEventEditTemplate = ({ price, destination, offers, type }) => {
                       <span class="visually-hidden">Choose event type</span>
                       <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
                     </label>
-                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox"${disabled}>
 
                     <div class="event__type-list">
-                      <fieldset class="event__type-group">
+                      <fieldset class="event__type-group"${disabled}>
                         <legend class="visually-hidden">Event type</legend>
-                        ${createTypeItemTempalte(type)}
+                        ${createTypeItemTempalte(type, isDisabled)}
                       </fieldset>
                     </div>
                   </div>
@@ -65,7 +91,7 @@ const createEventEditTemplate = ({ price, destination, offers, type }) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1"${disabled}>
                     <datalist id="destination-list-1">
                       ${CITY.map((city) => `<option value="${city}"></option>`).join('')}
                     </datalist>
@@ -73,10 +99,10 @@ const createEventEditTemplate = ({ price, destination, offers, type }) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="">
+                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=""${disabled}>
                     —
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="">
+                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=""${disabled}>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -84,12 +110,12 @@ const createEventEditTemplate = ({ price, destination, offers, type }) => {
                       <span class="visually-hidden">Price</span>
                       €
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}"${disabled}>
                   </div>
 
-                  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
+                  <button class="event__save-btn  btn  btn--blue" type="submit"${disabled}>${save}</button>
+                  <button class="event__reset-btn" type="reset"${disabled}>${del}</button>
+                  <button class="event__rollup-btn" type="button"${disabled}>
                     <span class="visually-hidden">Open event</span>
                   </button>
                 </header>
@@ -97,7 +123,7 @@ const createEventEditTemplate = ({ price, destination, offers, type }) => {
                   <section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     <div class="event__available-offers">
-                      ${createOfferSelectorTemplate(offers)}
+                      ${createOfferSelectorTemplate(offers, isDisabled)}
                     </div>
                   </section>
 
@@ -112,7 +138,7 @@ const createEventEditTemplate = ({ price, destination, offers, type }) => {
 };
 
 export default class EventEdit extends Smart {
-  constructor(event = generateEvent()) {
+  constructor(event = BLANK_EVENT) {
     super();
     this._event = EventEdit.parseEventToData(event);
     this._startDatepicker = null;
@@ -266,10 +292,18 @@ export default class EventEdit extends Smart {
   }
 
   static parseEventToData(event) {
-    return Object.assign({}, event);
+    return Object.assign({
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    }, event);
   }
 
   static parseDataToEvent(event) {
-    return Object.assign({}, event);
+    const data = Object.assign({}, event);
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+    return data;
   }
 }

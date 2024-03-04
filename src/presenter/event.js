@@ -1,7 +1,7 @@
 import EventEditView from '../view/event-edit.js';
 import EventView from '../view/event.js';
 import { render, RenderPosition, replace, remove } from '../utils/render.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, State } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -46,7 +46,8 @@ export default class Event {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._eventEditComponent, prevEventEditComponent);
+      replace(this._eventComponent, prevEventEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventCompoment);
@@ -61,6 +62,35 @@ export default class Event {
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToCard();
+    }
+  }
+
+  setViewState(state) {
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._eventEditComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -113,7 +143,6 @@ export default class Event {
       UpdateType.PATCH,
       event,
     );
-    this._replaceFormToCard();
   }
 
   _handleDeleteClick(event) {

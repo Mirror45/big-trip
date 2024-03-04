@@ -2,9 +2,16 @@ import Abstract from './abstract.js';
 import { getFormat } from '../utils/event.js';
 
 const createInfoTemplate = (events) => {
+  if (events.length === 0) {
+    return '<span class="visually-hidden"></span>';
+  }
+
   const city = new Set();
   const totalPrice = events.reduce((a, { price, destination }) => {
-    city.add(destination.name);
+    if (city.size < 3) {
+      city.add(destination.name);
+    }
+
     return a + price;
   }, 0);
 

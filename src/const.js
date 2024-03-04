@@ -40,4 +40,14 @@ const MENU = {
   STATS: 'Stats',
 };
 
-export { TYPE, OFFERS, CITY, FILTER, SORT, UserAction, UpdateType, MENU };
+const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
+};
+
+const DESCRIPTION = 'Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.';
+
+const PICTURES = new Array(5).fill().map((_, i) => ({ src: `img/photos/${i + 1}.jpg`, description: 'Event photo' }));
+
+export { TYPE, OFFERS, CITY, FILTER, SORT, UserAction, UpdateType, MENU, DESCRIPTION, PICTURES, State };

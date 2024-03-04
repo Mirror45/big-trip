@@ -7,7 +7,7 @@ import EventPresenter from './event.js';
 import EventNewPresenter from './event-new.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
 import { sortDay, sortTime, sortPrice, filterFuture, filterPast } from '../utils/event.js';
-import { SORT, FILTER, UpdateType, UserAction } from '../const.js';
+import { SORT, FILTER, UpdateType, UserAction, State } from '../const.js';
 
 export default class Table {
   constructor(tableContainer, infoContainer, eventModel, filterComponent, api) {
@@ -93,15 +93,28 @@ export default class Table {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
+        this._eventPresenter[update.id].setViewState(State.SAVING);
         this._api.updateEvent(update).then((response) => {
           this._eventModel.updateEvent(updateType, response);
+        }).catch(() => {
+          this._eventPresenter[update.id].setViewState(State.ABORTING);
         });
         break;
       case UserAction.ADD_EVENT:
-        this._eventModel.addEvent(updateType, update);
+        this._eventNewPresenter.setSaving();
+        this._api.addEvent(update).then((response) => {
+          this._eventModel.addEvent(updateType, response);
+        }).catch(() => {
+          this._eventNewPresenter.setAborting();
+        });
         break;
       case UserAction.DELETE_EVENT:
-        this._eventModel.deleteEvent(updateType, update);
+        this._eventPresenter[update.id].setViewState(State.DELETING);
+        this._api.deleteEvent(update).then(() => {
+          this._eventModel.deleteEvent(updateType, update);
+        }).catch(() => {
+          this._eventPresenter[update.id].setViewState(State.ABORTING);
+        });
         break;
     }
   }
@@ -209,6 +222,7 @@ export default class Table {
 
     if (eventCount === 0) {
       this._renderEmpty();
+      remove(this._sortComponent);
       return;
     }
 
