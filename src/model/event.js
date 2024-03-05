@@ -8,11 +8,17 @@ export default class Event extends Observer {
     this._destinations = [];
   }
 
-  setEvents(updateType, events, offers, destinations) {
+  setEvents(updateType, events) {
     this._events = events.slice();
-    this._offers = offers.slice();
-    this._destinations = destinations.slice();
     this._notify(updateType);
+  }
+
+  setOffers(offers) {
+    this._offers = offers;
+  }
+
+  setDestinations(destinations) {
+    this._destinations = destinations;
   }
 
   getEvents() {
@@ -92,7 +98,7 @@ export default class Event extends Observer {
       {},
       event,
       {
-        base_price: event.price,
+        base_price: +event.price,
         is_favorite: event.isFavorite,
         date_from: event.startTime.toISOString(),
         date_to: event.endTime.toISOString(),

@@ -30,9 +30,10 @@ const createTypeItemTempalte = (type, isDisabled) => {
   }).join('');
 };
 
-const createOfferSelectorTemplate = (offers, isDisabled) => {
+const createOfferSelectorTemplate = (offers, isDisabled, isOffers) => {
+  const data = isOffers ? isOffers.offers : OFFERS;
 
-  return OFFERS.map(({ title, price }) => {
+  return data.map(({ title, price }) => {
     const id = title.match(/\w+$/);
     const checked = isDisabled ? ' disabled' : offers.some((e) => e.title == title) ? ' checked' : '';
 
@@ -64,6 +65,7 @@ const createEventEditTemplate = ({
   isDisabled,
   isSaving,
   isDeleting,
+  isDestinations,
 }) => {
   const disabled = isDeleting ? ' disabled' : '';
   const save = isSaving ? 'Saving...' : 'Save';
@@ -292,18 +294,25 @@ export default class EventEdit extends Smart {
   }
 
   static parseEventToData(event) {
-    return Object.assign({
-      isDisabled: false,
-      isSaving: false,
-      isDeleting: false,
-    }, event);
+    return Object.assign(
+      {
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+        isDestinations: [BLANK_EVENT.destination],
+      },
+      event
+    );
   }
 
   static parseDataToEvent(event) {
     const data = Object.assign({}, event);
+
     delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;
+    delete data.isDestinations;
+
     return data;
   }
 }

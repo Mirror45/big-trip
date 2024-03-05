@@ -24,12 +24,12 @@ export default class Event {
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(event) {
+  init(event, offers, destination) {
     this._event = event;
     const prevEventCompoment = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventEditComponent = new EventEditView(event, offers, destination);
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setEditClickHandler(this._handleClick);
