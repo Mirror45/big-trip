@@ -4,4 +4,8 @@ const getRandomInteger = (a = 1, b = 0) => {
   return Math.round(Math.random() * (max - min) + min);
 };
 
-export { getRandomInteger };
+const isOnline = () => {
+  return window.navigator.onLine;
+};
+
+export { getRandomInteger, isOnline };

@@ -1,4 +1,4 @@
-import EventModel from './model/event.js';
+import EventModel from '../model/event.js';
 
 const Method = {
   GET: 'GET',
@@ -39,8 +39,7 @@ export default class Api {
       this.getOffers(),
       this.getDestinations(),
       this.getEvents(),
-    ])
-      .catch(Api.catchError);
+    ]);
   }
 
   updateEvent(event) {
@@ -70,6 +69,16 @@ export default class Api {
       url: `points/${event.id}`,
       method: Method.DELETE,
     });
+  }
+
+  sync(data) {
+    return this._load({
+      url: 'points/sync',
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+    })
+      .then(Api.toJSON);
   }
 
   _load({

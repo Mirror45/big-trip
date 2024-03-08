@@ -1,6 +1,4 @@
 import dayjs from 'dayjs';
-import * as duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
 
 const getTime = (a, b) => {
   const time = dayjs('2000-01-01').add(dayjs(b).diff(a));
@@ -22,24 +20,16 @@ const getFormat = (data) => {
   };
 };
 
-const getZeroSubStr = (number) => (number < 10) ? `0${number}` : `${number}`;
-
-const gapToString = ({ days, hours, minutes }) => {
-  if (days > 0) {
-    return `${getZeroSubStr(days)}D ${getZeroSubStr(hours)}H ${getZeroSubStr(minutes)}M`;
-  } else if (hours > 0) {
-    return `${getZeroSubStr(hours)}H ${getZeroSubStr(minutes)}M`;
-  } else {
-    return `${getZeroSubStr(minutes)}M`;
-  }
-};
-
-const getDiff = (start, end) => {
-  return dayjs(end).diff(dayjs(start));
+const getDiff = ({ startTime, endTime }) => {
+  return dayjs(endTime).diff(startTime);
 };
 
 const diffToString = (diff) => {
-  return gapToString(dayjs.duration(diff).$d);
+  const time = dayjs('2000-01-01').add(diff);
+
+  if (time.date() > 1) return time.subtract(1, 'day').format('DD[D] HH[H] mm[M]');
+  if (time.hour() > 0) return time.format('HH[H] mm[M]');
+  return time.format('mm[M]');
 };
 
 const sortDay = (a, b) => {
@@ -70,18 +60,19 @@ const calculateMoney = (events) => {
   return new Map(Object.entries(money).sort((a, b) => b[1] - a[1]));
 };
 
-const calculateType = (event) => {
+const calculateType = (events) => {
   const types = {};
-  event.forEach(({ type }) => {
+  events.forEach(({ type }) => {
     types[type] = types[type] !== undefined ? types[type] + 1 : 1;
   });
   return new Map(Object.entries(types).sort((a, b) => b[1] - a[1]));
 };
 
-const calculateTime = (event) => {
+const calculateTime = (events) => {
   const time = {};
-  event.forEach(({ type, startTime, endTime }) => {
-    time[type] = time[type] !== undefined ? time[type] + getDiff(startTime, endTime) : getDiff(startTime, endTime);
+  events.forEach((item) => {
+    const { type } = item;
+    return time[type] = time[type] !== undefined ? time[type] + getDiff(item) : getDiff(item);
   });
   return new Map(Object.entries(time).sort((a, b) => b[1] - a[1]));
 };
