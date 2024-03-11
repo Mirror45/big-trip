@@ -13,12 +13,12 @@ export default class EventNew {
     this._handleClick = this._handleClick.bind(this);
   }
 
-  init() {
+  init(offers, destination) {
     if (this._eventEditComponent !== null) {
       return;
     }
 
-    this._eventEditComponent = new EventEditView();
+    this._eventEditComponent = new EventEditView(undefined, offers, destination);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._eventEditComponent.setEditClickHandler(this._handleClick);

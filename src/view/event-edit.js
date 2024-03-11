@@ -4,6 +4,7 @@ import Smart from './smart.js';
 import { TYPE, OFFERS, CITY, DESCRIPTION, PICTURES } from '../const.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.js';
+import { nanoid } from 'nanoid';
 
 const BLANK_EVENT = {
   price: 0,
@@ -31,10 +32,8 @@ const createTypeItemTempalte = (type, isDisabled) => {
 };
 
 const createOfferSelectorTemplate = (offers, isDisabled, isOffers) => {
-  const data = isOffers ? isOffers.offers : OFFERS;
-
-  return data.map(({ title, price }) => {
-    const id = title.match(/\w+$/);
+  return isOffers.map(({ title, price }) => {
+    const id = nanoid();
     const checked = isDisabled ? ' disabled' : offers.some((e) => e.title == title) ? ' checked' : '';
 
     return `<div class="event__offer-selector">
@@ -65,11 +64,14 @@ const createEventEditTemplate = ({
   isDisabled,
   isSaving,
   isDeleting,
-  isDestinations,
-}) => {
+},
+  isOffers,
+  isDestination,
+) => {
   const disabled = isDeleting ? ' disabled' : '';
   const save = isSaving ? 'Saving...' : 'Save';
   const del = isDeleting ? 'Deleting...' : 'Delete';
+  const city = isDestination.map(({ name }) => `<option value="${name}"></option>`).join('');
 
   return `<li class="trip-events__item">
               <form class="event event--edit" action="#" method="post">
@@ -95,7 +97,7 @@ const createEventEditTemplate = ({
                     </label>
                     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destination.name)}" list="destination-list-1"${disabled}>
                     <datalist id="destination-list-1">
-                      ${CITY.map((city) => `<option value="${city}"></option>`).join('')}
+                      ${city}
                     </datalist>
                   </div>
 
@@ -125,7 +127,7 @@ const createEventEditTemplate = ({
                   <section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
                     <div class="event__available-offers">
-                      ${createOfferSelectorTemplate(offers, isDisabled)}
+                      ${createOfferSelectorTemplate(offers, isDisabled, isOffers)}
                     </div>
                   </section>
 
@@ -140,9 +142,11 @@ const createEventEditTemplate = ({
 };
 
 export default class EventEdit extends Smart {
-  constructor(event = BLANK_EVENT) {
+  constructor(event = BLANK_EVENT, offers = [], destination = []) {
     super();
     this._event = EventEdit.parseEventToData(event);
+    this._offers = offers;
+    this._destination = destination;
     this._startDatepicker = null;
     this._endDatepicker = null;
     this._editClickHandler = this._editClickHandler.bind(this);
@@ -164,7 +168,8 @@ export default class EventEdit extends Smart {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event);
+    const { offers } = this._offers.find(({ type }) => type === this._event.type);
+    return createEventEditTemplate(this._event, offers, this._destination);
   }
 
   restoreHandlers() {
@@ -215,12 +220,22 @@ export default class EventEdit extends Smart {
     evt.preventDefault();
     this.updateData({
       type: evt.target.value,
+      offers: [],
     });
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 
   _cityInputHandler(evt) {
     evt.preventDefault();
-    this.updateData({ destination: { ...this._event.destination, name: evt.target.value } }, true);
+    this.updateData({
+      destination:
+        this._destination.find(({ name }) => name === evt.target.value) ||
+        {
+          description: ' ',
+          name: evt.target.value || ' ',
+          pictures: [],
+        },
+    }, true);
   }
 
   _priceInputHandler(evt) {
@@ -240,13 +255,13 @@ export default class EventEdit extends Smart {
   _startChangeHandler([startTime]) {
     this.updateData({
       startTime,
-    });
+    }, true);
   }
 
   _endChangeHandler([endTime]) {
     this.updateData({
       endTime,
-    });
+    }, true);
   }
 
   _offerChangeHandler(evt) {
@@ -254,7 +269,11 @@ export default class EventEdit extends Smart {
     const offers = [];
     const title = evt.target.parentElement.querySelector('.event__offer-title').textContent;
 
-    if (evt.target.checked) offers.push(OFFERS.find((item) => item.title == title));
+    if (evt.target.checked) {
+      offers.push(
+        this._offers.find(({ type }) => type === this._event.type).offers.find((item) => item.title == title)
+      );
+    }
 
     this._event.offers.forEach((item) => {
       if (title != item.title) offers.push(item);
@@ -299,7 +318,6 @@ export default class EventEdit extends Smart {
         isDisabled: false,
         isSaving: false,
         isDeleting: false,
-        isDestinations: [BLANK_EVENT.destination],
       },
       event
     );
@@ -311,7 +329,6 @@ export default class EventEdit extends Smart {
     delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;
-    delete data.isDestinations;
 
     return data;
   }

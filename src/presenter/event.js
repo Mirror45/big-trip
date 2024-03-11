@@ -32,7 +32,6 @@ export default class Event {
     this._eventEditComponent = new EventEditView(event, offers, destination);
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._eventEditComponent.setEditClickHandler(this._handleClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
@@ -116,11 +115,13 @@ export default class Event {
   }
 
   _handleClick() {
+    this._eventEditComponent.reset(this._event);
     this._replaceFormToCard();
   }
 
   _handleEditClick() {
     this._replaceCardToForm();
+    this._eventEditComponent.setEditClickHandler(this._handleClick);
   }
 
   _handleFavoriteClick() {

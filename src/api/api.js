@@ -39,7 +39,8 @@ export default class Api {
       this.getOffers(),
       this.getDestinations(),
       this.getEvents(),
-    ]);
+    ])
+      .catch(Api.catchError);
   }
 
   updateEvent(event) {

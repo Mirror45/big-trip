@@ -11,7 +11,7 @@ import Api from './api/api.js';
 import Store from './api/store.js';
 import Provider from './api/provider.js';
 
-const AUTHORIZATION = 'Basic 8ApA45dt37Sn6cSx0';
+const AUTHORIZATION = 'Basic 8ApA45dt37Sn6cSx3';
 const END_POINT = 'https://14.ecmascript.htmlacademy.pro/big-trip';
 const STORE_PREFIX = 'big-trip-localstorage';
 const STORE_VER = 'v14';
@@ -68,9 +68,9 @@ render(filtersElement, filterComponent, RenderPosition.BEFOREEND);
 
 tablePresenter.init();
 
-apiWithProvider.getEvents().then((events) => {
-  //eventModel.setOffers(offers);
-  //eventModel.setDestinations(destinations);
+apiWithProvider.getData().then(([offers, destinations, events]) => {
+  eventModel.setOffers(offers);
+  eventModel.setDestinations(destinations);
   eventModel.setEvents(UpdateType.INIT, events);
   menuComponent.setMenuClickHandler(handleMenuClick);
   tablePresenter.setNewClickHandle(handleNewClick);
@@ -81,7 +81,7 @@ apiWithProvider.getEvents().then((events) => {
 });
 
 window.addEventListener('load', () => {
-  //navigator.serviceWorker.register('/sw.js');
+  navigator.serviceWorker.register('/sw.js');
 });
 
 window.addEventListener('online', () => {

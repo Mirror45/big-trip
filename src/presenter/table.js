@@ -53,7 +53,7 @@ export default class Table {
   }
 
   createEvent() {
-    this._eventNewPresenter.init();
+    this._eventNewPresenter.init(this._eventModel.getOffers(), this._eventModel.getDestinations());
   }
 
   setNewClickHandle(callback) {
@@ -122,7 +122,7 @@ export default class Table {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._eventPresenter[data.id].init(data);
+        this._eventPresenter[data.id].init(data, this._eventModel.getOffers(), this._eventModel.getDestinations());
         break;
       case UpdateType.MINOR:
         this._clearTable();
@@ -187,7 +187,7 @@ export default class Table {
 
   _renderEvent(event) {
     const eventPresenter = new EventPresenter(this._eventListCompoment, this._handleViewAction, this._handleModeChange);
-    eventPresenter.init(event);
+    eventPresenter.init(event, this._eventModel.getOffers(), this._eventModel.getDestinations());
     this._eventPresenter[event.id] = eventPresenter;
   }
 
