@@ -13,5 +13,3 @@ node_modules/
 package-lock.json
 
 # Собранные файлы
-public/bundle.js
-public/bundle.js.map

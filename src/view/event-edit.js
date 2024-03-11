@@ -1,10 +1,9 @@
 import dayjs from 'dayjs';
 import he from 'he';
 import Smart from './smart.js';
-import { TYPE, OFFERS, CITY, DESCRIPTION, PICTURES } from '../const.js';
+import { TYPE, CITY, DESCRIPTION, PICTURES } from '../const.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.js';
-import { nanoid } from 'nanoid';
 
 const BLANK_EVENT = {
   price: 0,
@@ -32,13 +31,12 @@ const createTypeItemTempalte = (type, isDisabled) => {
 };
 
 const createOfferSelectorTemplate = (offers, isDisabled, isOffers) => {
-  return isOffers.map(({ title, price }) => {
-    const id = nanoid();
+  return isOffers.map(({ title, price }, id) => {
     const checked = isDisabled ? ' disabled' : offers.some((e) => e.title == title) ? ' checked' : '';
 
     return `<div class="event__offer-selector">
-                  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}-1" type="checkbox" name="event-offer-${id}"${checked}>
-                  <label class="event__offer-label" for="event-offer-${id}-1">
+                  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}"${checked}>
+                  <label class="event__offer-label" for="event-offer-${id}">
                     <span class="event__offer-title">${title}</span>
                     +€&nbsp;
                     <span class="event__offer-price">${price}</span>
@@ -65,8 +63,8 @@ const createEventEditTemplate = ({
   isSaving,
   isDeleting,
 },
-  isOffers,
-  isDestination,
+isOffers,
+isDestination,
 ) => {
   const disabled = isDeleting ? ' disabled' : '';
   const save = isSaving ? 'Saving...' : 'Save';
@@ -270,9 +268,7 @@ export default class EventEdit extends Smart {
     const title = evt.target.parentElement.querySelector('.event__offer-title').textContent;
 
     if (evt.target.checked) {
-      offers.push(
-        this._offers.find(({ type }) => type === this._event.type).offers.find((item) => item.title == title)
-      );
+      offers.push(this._offers.find(({ type }) => type === this._event.type).offers.find((item) => item.title === title));
     }
 
     this._event.offers.forEach((item) => {
@@ -319,7 +315,7 @@ export default class EventEdit extends Smart {
         isSaving: false,
         isDeleting: false,
       },
-      event
+      event,
     );
   }
 

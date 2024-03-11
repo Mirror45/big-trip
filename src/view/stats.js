@@ -236,7 +236,7 @@ const createStatsTemplate = () => {
                 <div class="statistics__item">
                   <canvas class="statistics__chart" id="time-spend" width="900"></canvas>
                 </div>
-              </section>`
+              </section>`;
 };
 
 export default class Stats extends Smart {

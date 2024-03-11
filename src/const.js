@@ -1,13 +1,5 @@
 const TYPE = ['taxi', 'bus', 'train', 'ship', 'transport', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const OFFERS = [
-  { title: 'Add luggage', price: 30 },
-  { title: 'Switch to comfort class', price: 100 },
-  { title: 'Add meal', price: 15 },
-  { title: 'Choose seats', price: 5 },
-  { title: 'Travel by train', price: 40 },
-];
-
 const CITY = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const FILTER = {
@@ -50,4 +42,4 @@ const DESCRIPTION = 'Geneva is a city in Switzerland that lies at the southern t
 
 const PICTURES = new Array(5).fill().map((_, i) => ({ src: `img/photos/${i + 1}.jpg`, description: 'Event photo' }));
 
-export { TYPE, OFFERS, CITY, FILTER, SORT, UserAction, UpdateType, MENU, DESCRIPTION, PICTURES, State };
+export { TYPE, CITY, FILTER, SORT, UserAction, UpdateType, MENU, DESCRIPTION, PICTURES, State };
