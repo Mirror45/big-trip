@@ -91,6 +91,8 @@ src/
 
 ## 🔧 Getting Started
 
+> ⚠️ **Node.js v16** is required.
+
 ```bash
 # Clone the repository to your local machine
 git clone git@github.com:Mirror45/big-trip.git
